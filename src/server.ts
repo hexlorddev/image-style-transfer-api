@@ -7,6 +7,7 @@ import {
   endpointNotImplemented,
   globalErrorHandler,
 } from "@/middleware/errors.js";
+import { userRouter } from "./routes/user.routes.js";
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ app.use(helmet());
  *
  * app.use("/api/user", userRouter);
  */
+app.use("/api/user", userRouter);
 
 /*------------- Error middleware -------------*/
 app.use(endpointNotImplemented);

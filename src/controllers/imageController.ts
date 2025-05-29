@@ -1,11 +1,17 @@
-import { applyStyleTransfer } from '../utils/styleTransferUtils';
+import { Request, Response } from 'express';
+import { HttpError } from '../utils/errors/HttpError';
+import { uploadImageToStorage } from '../utils/imageUtils';
 
-export const handleStyleTransfer = async (image: string, style: string): Promise<Buffer | null> => {
+export const uploadImage = async (req: Request, res: Response) => {
   try {
-    const stylizedImage = await applyStyleTransfer(image, style);
-    return stylizedImage;
+    if (!req.file) {
+      throw new HttpError(400, 'No image file provided');
+    }
+
+    const imageUrl = await uploadImageToStorage(req.file);
+    res.status(201).json({ message: 'Image uploaded successfully', imageUrl: imageUrl });
   } catch (error: any) {
-    console.error("Error in handleStyleTransfer:", error);
-    return null;
+    console.error('Error uploading image:', error);
+    res.status(error.status || 500).json({ error: error.message || 'Failed to upload image' });
   }
 };
